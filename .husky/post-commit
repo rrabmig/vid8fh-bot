@@ -1,0 +1,1 @@
+echo "Commit message: $1"
