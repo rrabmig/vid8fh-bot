@@ -13,6 +13,8 @@ export class AiService {
   private throttle = false;
 
   async generate(prompt: string, systemMessage?: string, temperature?: number) {
+    console.log('🐐 Коза думает...');
+
     if (this.throttle) {
       return '🐐 Коза думает, дождись ответа';
     }
@@ -23,23 +25,33 @@ export class AiService {
 
     this.throttle = true;
 
-    return this.openai.chat.completions
-      .create({
-        model: this.model,
-        messages: [
-          { role: 'user', content: prompt },
-          {
-            role: 'system',
-            content: systemMessage,
-          },
-        ],
-        temperature: temperature,
-      })
-      .then((response) => {
-        return response.choices[0].message.content;
-      })
-      .finally(() => {
-        this.throttle = false;
-      });
+    const ans = await Promise.race([
+      new Promise<string>((resolve) => {
+        setTimeout(() => {
+          resolve('🐐 Коза устала думать (');
+        }, 120 * 1000);
+      }),
+      this.openai.chat.completions
+        .create({
+          model: this.model,
+          messages: [
+            { role: 'user', content: prompt },
+            {
+              role: 'system',
+              content: systemMessage,
+            },
+          ],
+          temperature: temperature,
+        })
+        .then((response) => {
+          return response.choices[0].message.content;
+        }),
+    ]).finally(() => {
+      this.throttle = false;
+    });
+
+    console.log(ans);
+
+    return ans;
   }
 }
