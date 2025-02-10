@@ -13,8 +13,6 @@ export class AiService {
   private throttle = false;
 
   async generate(prompt: string, systemMessage?: string, temperature?: number) {
-    console.log('🐐 Коза думает...');
-
     if (this.throttle) {
       return '🐐 Коза думает, дождись ответа';
     }
@@ -49,8 +47,6 @@ export class AiService {
     ]).finally(() => {
       this.throttle = false;
     });
-
-    console.log(ans);
 
     return ans;
   }
