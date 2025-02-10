@@ -7,8 +7,11 @@ on:
     branches: [main]
 
 jobs:
-  lint-and-typecheck:
+  test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [20]
 
     steps:
       - name: Checkout репозитория в CI
@@ -17,7 +20,7 @@ jobs:
       - name: Установка NodeJS
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node-version }}
           cache: 'npm'
 
       - name: Чистая установка зависимостей
